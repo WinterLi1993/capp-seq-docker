@@ -5,7 +5,7 @@
 # Base Image:       ubuntu
 # Pull Cmd:         docker pull anu9109/capp-seq
 # Run Cmd:          docker run -it anu9109/capp-seq
-# Run tools as:     bwa | samtools | sambamba | varscan
+# Run tools as:     bwa | samtools | sambamba | 'java -jar /opt/software/varscan/VarScan.v2.4.2.jar'
 #################################################################
 
 # Set the base image to Ubuntu
@@ -75,9 +75,7 @@ RUN cd /opt/software/ && \
 
 # install varscan-2.4.2 
 RUN cd /opt/software/ && \
-  git clone https://github.com/dkoboldt/varscan.git && \
-  echo 'alias varscan="java -jar /opt/software/varscan/VarScan.v2.4.2.jar"' >> ~/.bashrc
-
+  git clone https://github.com/dkoboldt/varscan.git 
 
 ENV PATH=$PATH:/opt/software:/opt/software/varscan
 
