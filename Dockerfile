@@ -63,7 +63,7 @@ RUN cd /opt/software/ && \
   mv /opt/software/sambamba_v0.6.3 /opt/software/sambamba && \
   rm /opt/software/sambamba_v0.6.3_linux.tar.bz2
 
-# install varscan ## /opt/software/varscan/VarScan.v2.4.2.jar ##
+# install varscan ## run as 'varscan'
 RUN cd /opt/software/ && \
   git clone https://github.com/dkoboldt/varscan.git && \
   echo 'alias varscan="java -jar /opt/software/varscan/VarScan.v2.4.2.jar"' >> ~/.bashrc
