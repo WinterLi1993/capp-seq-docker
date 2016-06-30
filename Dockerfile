@@ -49,7 +49,7 @@ RUN apt-get update && \
 # create /opt/software
 RUN mkdir -p /opt/software
 
-# install BWA-0.7.15 ## TO BE TESTED ##
+# install BWA-0.7.15
 RUN cd /opt/software/ && \
   wget https://github.com/lh3/bwa/releases/download/v0.7.15/bwa-0.7.15.tar.bz2 && \
   tar -xvjf /opt/software/bwa-0.7.15.tar.bz2 && \
