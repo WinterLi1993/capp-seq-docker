@@ -1,3 +1,13 @@
+#################################################################
+# Dockerfile
+#
+# Description:      Docker container with BWA-0.7.15 | samtools-1.3 | sambamba-0.6.3 | varscan-2.4.2 to call variants from deep sequencing (CAPP-Seq) data.
+# Base Image:       ubuntu
+# Pull Cmd:         docker pull anu9109/capp-seq
+# Run Cmd:          docker run -it anu9109/capp-seq
+# Run tools as:     bwa | samtools | sambamba | varscan
+#################################################################
+
 # Set the base image to Ubuntu
 FROM ubuntu
 
@@ -56,14 +66,14 @@ RUN cd /opt/software/ && \
   make install && \
   rm /opt/software/samtools-1.3.tar.bz2
 
-# install sambamba
+# install sambamba-0.6.3
 RUN cd /opt/software/ && \
   wget https://github.com/lomereiter/sambamba/releases/download/v0.6.3/sambamba_v0.6.3_linux.tar.bz2 && \
   tar -xvjf sambamba_v0.6.3_linux.tar.bz2 && \
   mv /opt/software/sambamba_v0.6.3 /opt/software/sambamba && \
   rm /opt/software/sambamba_v0.6.3_linux.tar.bz2
 
-# install varscan ## run as 'varscan'
+# install varscan-2.4.2 
 RUN cd /opt/software/ && \
   git clone https://github.com/dkoboldt/varscan.git && \
   echo 'alias varscan="java -jar /opt/software/varscan/VarScan.v2.4.2.jar"' >> ~/.bashrc
