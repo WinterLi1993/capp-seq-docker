@@ -1,11 +1,18 @@
 #################################################################
 # Dockerfile
 #
-# Description:      Docker container with BWA-0.7.15 | samtools-1.3 | sambamba-0.6.3 | varscan-2.4.2 to call variants from deep sequencing (CAPP-Seq) data.
+# Description:      Docker container with BWA-0.7.15 | samtools-1.3 | sambamba-0.6.3 | varscan-2.4.2 | samblaster-0.1.22 | abra-0.97 | vcftools-0.1.14 | vcflib-1.0.0-rc1 to call variants from deep sequencing (CAPP-Seq) data.
 # Base Image:       ubuntu
 # Pull Cmd:         docker pull anu9109/capp-seq
 # Run Cmd:          docker run -it anu9109/capp-seq
-# Run tools as:     bwa | samtools | sambamba | 'java -jar /opt/software/varscan/VarScan.v2.4.2.jar'
+# Run tools as:     docker run -it anu9109/capp-seq bwa 
+#		    docker run -it anu9109/capp-seq samtools 
+#		    docker run -it anu9109/capp-seq sambamba 
+#		    docker run -it anu9109/capp-seq java -jar /opt/software/varscan/VarScan.v2.4.2.jar
+#		    docker run -it anu9109/capp-seq samblaster
+#	    	    docker run -it anu9109/capp-seq vcftools
+#		    docker run -it anu9109/capp-seq vcfcombine (or any vcflib command)
+#		    docker run -it anu9109/capp-seq java -jar /opt/software/abra.jar
 #################################################################
 
 # Set the base image to Ubuntu
@@ -77,7 +84,35 @@ RUN cd /opt/software/ && \
 RUN cd /opt/software/ && \
   git clone https://github.com/dkoboldt/varscan.git 
 
-ENV PATH=$PATH:/opt/software:/opt/software/varscan
+# install vcftools-0.1.14
+RUN  cd /opt/software/ && \
+  git clone https://github.com/vcftools/vcftools.git && \
+  cd /opt/software/vcftools && \
+  ./autogen.sh && \
+  ./configure && \
+  make && \
+  make install
+
+
+# install vcflib-1.0.0-rc1
+RUN  cd /opt/software/ && \
+  git clone --recursive https://github.com/vcflib/vcflib.git && \
+  cd /opt/software/vcflib && \
+  make openmp
+
+# install abra-0.97
+RUN  cd /opt/software/ && \
+  wget https://github.com/mozack/abra/releases/download/v0.97/abra-0.97-SNAPSHOT-jar-with-dependencies.jar && \
+  mv /opt/software/abra-0.97-SNAPSHOT-jar-with-dependencies.jar /opt/software/abra.jar
+
+# install samblaster-0.1.22
+RUN  cd /opt/software/ && \
+  git clone git://github.com/GregoryFaust/samblaster.git && \
+  cd /opt/software/samblaster && \
+  make
+
+
+ENV PATH=$PATH:/opt/software:/opt/software/varscan:/opt/software/vcflib/bin:/opt/software/samblaster
 
 
 ##################### INSTALLATION END ##########################
