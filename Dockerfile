@@ -46,6 +46,10 @@ RUN apt-get update && \
   libgd-dev \
   nettle-dev \
   bioperl \
+  r-base \
+  r-base-dev \
+  r-cran-xml \
+  libxml2-dev \
   default-jre \ 
   default-jdk && \
   apt-get clean && \
@@ -70,6 +74,10 @@ RUN cd /opt/software/ && \
   tar -xvjf /opt/software/samtools-1.3.tar.bz2 && \
   cd /opt/software/samtools-1.3 && \
   make && \
+  make install
+RUN cd /opt/software/samtools-1.3/htslib-1.3 && \
+  ./configure && \
+  make && \
   make install && \
   rm /opt/software/samtools-1.3.tar.bz2
 
@@ -93,7 +101,6 @@ RUN  cd /opt/software/ && \
   make && \
   make install
 
-
 # install vcflib-1.0.0-rc1
 RUN  cd /opt/software/ && \
   git clone --recursive https://github.com/vcflib/vcflib.git && \
@@ -111,8 +118,22 @@ RUN  cd /opt/software/ && \
   cd /opt/software/samblaster && \
   make
 
+# install R packages
+RUN wget https://cran.r-project.org/src/base/R-3/R-3.3.0.tar.gz && tar -zxvf R-3.3.0.tar.gz && cd R-3.3.0 && ./configure && make && make install && rm -r /R-3.3.0.tar.gz
+RUN echo "local({r <- getOption('repos'); r['CRAN'] <- 'https://cran.cnr.berkeley.edu'; options(repos=r)})" > ~/.Rprofile
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R")' \ 
+  -e 'biocLite("Rsamtools")' \
+  -e 'biocLite("VariantAnnotation")' \
+  -e 'biocLite("GenomicRanges")'
+RUN Rscript  -e 'install.packages("plyr")'
+RUN Rscript -e "install.packages('optparse')"
 
-ENV PATH=$PATH:/opt/software:/opt/software/varscan:/opt/software/vcflib/bin:/opt/software/samblaster
+# adding contamination check script and panel
+#RUN mkdir -p /home/cont
+#ADD cont.R /home/cont/
+#ADD contPanel.csv /home/cont/
+
+ENV PATH=$PATH:/opt/software:/opt/software/varscan:/opt/software/vcflib/bin:/opt/software/samblaster:/opt/software/samtools-1.3/htslib-1.3
 
 
 ##################### INSTALLATION END ##########################
